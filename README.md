@@ -49,8 +49,7 @@ route. Pick the tun setup if you need the whole machine on the campus network.
 ## Try it without installing
 
 ```sh
-export HKU_USER=youruid@connect.hku.hk
-nix run github:Airzh1124/hkuvpn-nix -- set-password   # once; stores the PIN in the keyring
+nix run github:Airzh1124/hkuvpn-nix -- set-password   # once; asks for your account and PIN
 nix run github:Airzh1124/hkuvpn-nix
 ```
 
@@ -71,7 +70,6 @@ NixOS:
 
   programs.hkuvpn = {
     enable = true;
-    user = "youruid@connect.hku.hk"; # optional; otherwise export HKU_USER
     # socksPort = 1080;
     # server = "vpn2fa.hku.hk";
   };
@@ -83,15 +81,25 @@ Home Manager: same options, with `inputs.hkuvpn.homeModules.default`.
 Without the module, `inputs.hkuvpn.packages.${system}.default` is the plain
 package, and `overlays.default` adds it as `pkgs.hkuvpn`.
 
+## Setting your account
+
+There is nothing to configure. `hkuvpn set-password` asks for your account
+(`youruid@connect.hku.hk`) and Portal PIN and saves both in the desktop
+keyring; `hkuvpn` reads them back from there. Neither ends up in your Nix
+config or shell files, so a public config repository does not leak your UID.
+
+Run `hkuvpn set-password` again to change the PIN or switch to another
+account; it keeps exactly one.
+
 ## Usage
 
 ```sh
-hkuvpn set-password   # once
+hkuvpn set-password   # once; asks for your account and Portal PIN
 hkuvpn                # connect; Ctrl-C disconnects
 ```
 
-`HKU_USER`, `HKUVPN_SERVER` and `HKUVPN_PORT` override the configured values
-for a single run.
+`HKUVPN_SERVER` and `HKUVPN_PORT` override the configured values for a single
+run.
 
 Using the proxy:
 

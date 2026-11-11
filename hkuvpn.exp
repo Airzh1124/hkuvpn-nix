@@ -8,7 +8,7 @@ set timeout -1
 set user $env(HKUVPN_USER)
 
 if {[catch {exec secret-tool lookup service hkuvpn user $user} password]} {
-  puts stderr "hkuvpn: no password for $user in the keyring. Store it with: hkuvpn set-password"
+  puts stderr "hkuvpn: could not read the password for $user from the keyring. Run: hkuvpn set-password"
   exit 1
 }
 

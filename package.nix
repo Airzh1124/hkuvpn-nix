@@ -6,8 +6,7 @@
   expect,
   libsecret,
   # Build-time defaults; each can still be overridden at run time through
-  # HKU_USER, HKUVPN_SERVER and HKUVPN_PORT.
-  user ? null,
+  # HKUVPN_SERVER and HKUVPN_PORT.
   server ? "vpn2fa.hku.hk",
   socksPort ? 1080,
 }:
@@ -23,7 +22,6 @@ writeShellApplication {
   ];
 
   runtimeEnv = {
-    HKUVPN_DEFAULT_USER = if user == null then "" else user;
     HKUVPN_DEFAULT_SERVER = server;
     HKUVPN_DEFAULT_PORT = toString socksPort;
     HKUVPN_EXPECT_SCRIPT = "${./hkuvpn.exp}";

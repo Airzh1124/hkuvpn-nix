@@ -14,16 +14,6 @@ in
   options.programs.hkuvpn = {
     enable = lib.mkEnableOption "the hkuvpn command (HKUVPN through a local SOCKS5 proxy)";
 
-    user = lib.mkOption {
-      type = lib.types.nullOr lib.types.str;
-      default = null;
-      example = "youruid@connect.hku.hk";
-      description = ''
-        HKU account to connect as. When null, the `HKU_USER` environment
-        variable must be set at run time.
-      '';
-    };
-
     server = lib.mkOption {
       type = lib.types.str;
       default = "vpn2fa.hku.hk";
@@ -46,7 +36,7 @@ in
   config = lib.mkMerge [
     {
       programs.hkuvpn.package = pkgs.callPackage ./package.nix {
-        inherit (cfg) user server socksPort;
+        inherit (cfg) server socksPort;
       };
     }
     (lib.mkIf cfg.enable (
