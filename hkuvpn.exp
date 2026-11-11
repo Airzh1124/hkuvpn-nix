@@ -1,0 +1,46 @@
+# Driven by hkuvpn.sh, which validates and exports HKUVPN_USER, HKUVPN_SERVER
+# and HKUVPN_PORT.
+#
+# The password is read from the keyring here rather than in the shell wrapper
+# so that it never appears in an environment variable or on a command line.
+
+set timeout -1
+set user $env(HKUVPN_USER)
+
+if {[catch {exec secret-tool lookup service hkuvpn user $user} password]} {
+  puts stderr "hkuvpn: no password for $user in the keyring. Store it with: hkuvpn set-password"
+  exit 1
+}
+
+# --script-tun hands the tunnel to ocproxy instead of creating a tun device,
+# so no root is needed and the system routing table is left alone.
+spawn openconnect \
+  --protocol=anyconnect \
+  --no-dtls \
+  --script-tun \
+  --script "ocproxy -D $env(HKUVPN_PORT)" \
+  --user $user \
+  $env(HKUVPN_SERVER)
+
+expect {
+  -nocase "Password:" {
+    send -- "$password\r"
+    unset password
+  }
+  eof {
+    set status [wait]
+    exit [lindex $status 3]
+  }
+}
+
+# The 2FA prompt is answered by the user; from there on the terminal is theirs.
+expect {
+  -nocase "Response:" { interact }
+  eof {
+    set status [wait]
+    exit [lindex $status 3]
+  }
+}
+
+set status [wait]
+exit [lindex $status 3]
