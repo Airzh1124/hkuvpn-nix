@@ -12,7 +12,7 @@ Response: <type your 2FA code>
 
 Then point whatever needs the campus network at `socks5h://127.0.0.1:1080`.
 
-This is deliberately small: one command, three nixpkgs dependencies, no
+This is deliberately small: one command, four nixpkgs dependencies, no
 daemon, no container. It fits you if you are on NixOS (or use Nix with Home
 Manager on Linux), have a desktop keyring, and a SOCKS5 port is all you need.
 

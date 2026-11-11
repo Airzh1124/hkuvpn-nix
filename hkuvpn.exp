@@ -36,6 +36,14 @@ expect {
 # The 2FA prompt is answered by the user; from there on the terminal is theirs.
 expect {
   -nocase "Response:" { interact }
+  -nocase "Password:" {
+    # Asked again: the saved PIN was rejected. Nobody is at this prompt, so
+    # stop here instead of waiting forever.
+    close
+    wait
+    puts stderr "\nhkuvpn: the server did not accept the saved PIN. Update it with: hkuvpn set-password"
+    exit 1
+  }
   eof {
     set status [wait]
     exit [lindex $status 3]
